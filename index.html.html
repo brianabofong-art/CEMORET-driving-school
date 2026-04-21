@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cemoret Driving School — Bamenda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────── TOKENS ─────────────────── */
+:root {
+  --bg:        #03070f;
+  --bg2:       #060d1a;
+  --bg3:       #081020;
+  --blue:      #1a6dff;
+  --blue-b:    #4d94ff;
+  --blue-d:    #0d3d99;
+  --blue-g:    rgba(26,109,255,0.12);
+  --white:     #ffffff;
+  --w85:       rgba(255,255,255,0.85);
+  --w50:       rgba(255,255,255,0.5);
+  --w25:       rgba(255,255,255,0.25);
+  --w10:       rgba(255,255,255,0.07);
+  --b30:       rgba(26,109,255,0.3);
+  --b15:       rgba(26,109,255,0.15);
+  --b08:       rgba(26,109,255,0.08);
+  --radius:    4px;
+  --font-head: 'Anton', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ─────────────────── RESET ─────────────────── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px;overflow-x:hidden}
+body{
+  background:var(--bg);
+  color:var(--white);
+  font-family:var(--font-body);
+  overflow-x:hidden;
+  cursor:none;
+  -webkit-font-smoothing:antialiased;
+  width:100%;
+}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+img{display:block;max-width:100%}
+button{font-family:var(--font-body);border:none;background:none;cursor:none}
+
+/* ─────────────────── CURSOR ─────────────────── */
+#c-dot{
+  position:fixed;width:10px;height:10px;
+  background:var(--blue-b);border-radius:50%;
+  pointer-events:none;z-index:10000;
+  transform:translate(-50%,-50%);
+  transition:transform .12s ease,background .2s;
+  mix-blend-mode:screen;
+}
+#c-ring{
+  position:fixed;width:34px;height:34px;
+  border:1.5px solid var(--blue-b);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform .38s ease,opacity .3s;
+  opacity:.45;
+}
+body:has(a:hover) #c-dot,body:has(button:hover) #c-dot{transform:translate(-50%,-50%) scale(2.2)}
+body:has(a:hover) #c-ring,body:has(button:hover) #c-ring{transform:translate(-50%,-50%) scale(1.5);opacity:.7}
+
+/* ─────────────────── CANVAS (GRID) ─────────────────── */
+#grid-canvas{
+  position:fixed;inset:0;z-index:0;
+  pointer-events:none;opacity:.35;
+}
+
+/* ─────────────────── BLOBS ─────────────────── */
+.blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{
+  position:absolute;border-radius:50%;
+  filter:blur(90px);opacity:.18;
+  animation:blobDrift 14s ease-in-out infinite alternate;
+}
+.blob-1{width:520px;height:520px;background:var(--blue);top:-100px;left:-120px;animation-duration:16s}
+.blob-2{width:380px;height:380px;background:#0a3dcc;top:40%;right:-80px;animation-duration:12s;animation-delay:3s}
+.blob-3{width:300px;height:300px;background:var(--blue-b);bottom:10%;left:30%;animation-duration:18s;animation-delay:6s;opacity:.12}
+@keyframes blobDrift{
+  0%{transform:translate(0,0) scale(1)}
+  100%{transform:translate(40px,60px) scale(1.08)}
+}
+
+/* ─────────────────── SCROLLBAR ─────────────────── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--blue);border-radius:2px}
+
+/* ─────────────────── NAV ─────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;height:64px;
+  background:rgba(3,7,15,.92);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(26,109,255,.1);
+  transition:border-color .4s,background .4s;
+}
+nav.scrolled{border-bottom-color:rgba(26,109,255,.22);background:rgba(3,7,15,.97)}
+.nav-logo{
+  display:flex;align-items:center;gap:11px;
+  text-decoration:none;user-select:none;flex-shrink:0;
+}
+.nav-logo-icon{
+  width:38px;height:38px;border-radius:9px;
+  background:var(--blue);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.nav-logo-icon svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav-logo-text{display:flex;flex-direction:column;line-height:1}
+.nav-logo-name{
+  font-family:var(--font-head);
+  font-size:1.15rem;letter-spacing:2.5px;
+  color:var(--white);line-height:1;
+}
+.nav-logo-name em{color:var(--blue-b);font-style:normal}
+.nav-logo-sub{
+  font-family:var(--font-body);
+  font-size:.56rem;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;
+  color:var(--blue-b);margin-top:3px;line-height:1;opacity:.85;
+}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{
+  font-size:.72rem;font-weight:600;
+  letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--w50);position:relative;transition:color .25s;white-space:nowrap;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-4px;left:0;
+  width:0;height:1.5px;background:var(--blue-b);transition:width .3s;
+}
+.nav-links a:hover{color:var(--white)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--blue);color:var(--white) !important;
+  padding:9px 20px 9px 16px;border-radius:100px;
+  font-size:.72rem !important;font-weight:700 !important;
+  letter-spacing:1.2px;text-transform:uppercase;
+  transition:background .25s,transform .2s,box-shadow .25s;
+  box-shadow:0 4px 18px rgba(26,109,255,.35);white-space:nowrap;
+}
+.nav-cta-dot{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.8;flex-shrink:0;animation:dotPulse 2s ease-in-out infinite}
+@keyframes dotPulse{0%,100%{opacity:.8;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+.nav-cta::after{display:none !important}
+.nav-cta:hover{background:var(--blue-b) !important;transform:translateY(-1px);box-shadow:0 6px 24px rgba(26,109,255,.5)}
+.nav-burger{
+  display:none;flex-direction:column;gap:5px;
+  width:36px;height:36px;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,.1);border-radius:8px;
+  background:rgba(255,255,255,.04);cursor:pointer;
+  transition:border-color .25s,background .25s;flex-shrink:0;
+}
+.nav-burger:hover{border-color:var(--blue);background:var(--b08)}
+.nav-burger span{display:block;width:18px;height:1.5px;background:var(--w85);border-radius:2px;transition:transform .3s,opacity .3s,width .3s}
+.nav-burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.nav-burger.open span:nth-child(2){opacity:0;width:0}
+.nav-burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.nav-drawer{
+  display:flex;
+  position:fixed;top:64px;left:0;right:0;
+  background:rgba(3,7,15,.98);
+  border-bottom:1px solid rgba(26,109,255,.15);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  z-index:499;padding:20px 28px 24px;
+  flex-direction:column;gap:0;
+  transform:translateY(-8px);opacity:0;pointer-events:none;
+  transition:transform .3s ease,opacity .3s ease;
+}
+.nav-drawer.open{transform:translateY(0);opacity:1;pointer-events:all}
+.nav-drawer a{
+  display:block;padding:13px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  font-size:.8rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--w50);transition:color .2s,padding-left .2s;
+}
+.nav-drawer a:hover{color:var(--white);padding-left:8px}
+.nav-drawer a:last-child{border-bottom:none}
+.nav-drawer .drawer-cta{
+  margin-top:16px;background:var(--blue);color:#fff !important;
+  text-align:center;padding:13px 20px;border-radius:100px;
+  box-shadow:0 4px 18px rgba(26,109,255,.3);
+}
+
+/* ─────────────────── HERO ─────────────────── */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;min-height:100svh;
+  display:flex;flex-direction:column;justify-content:center;
+  /* Horizontal padding = 22px left/right. Text can never get closer than 22px to edge */
+  padding:90px 22px 80px;
+  /* CRITICAL: do NOT set overflow:hidden here — it clips text */
+}
+/* Announcement pill */
+.hero-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(26,109,255,.1);
+  border:1px solid rgba(26,109,255,.28);
+  border-radius:100px;padding:7px 14px;
+  margin-bottom:24px;width:fit-content;max-width:100%;
+  opacity:0;animation:fadeUp .6s .2s forwards;
+}
+.hero-pill-dot{
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;
+  background:var(--blue-b);
+  animation:dotPulse2 2s ease-in-out infinite;
+}
+@keyframes dotPulse2{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+.hero-pill-text{
+  font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--blue-b);white-space:normal;
+}
+
+/*
+  HEADLINE SIZING STRATEGY
+  ─────────────────────────
+  "CONFIDENCE" in Anton at full width on a 360px phone = ~8 chars × ~42px each = overflows.
+  Fix: use viewport width units capped low enough that even the longest word fits.
+
+  Longest word = CONFIDENCE = 10 chars.
+  Phone screen (360px) minus 44px padding = 316px usable.
+  Anton char-width ≈ 0.6× font-size.
+  316 / (10 × 0.6) = 52.6px max safe size → use 48px to be safe.
+
+  So on mobile: font-size = 48px = 3rem.
+  On desktop: font-size scales up to 6.5rem max.
+  We use vw units capped with min/max.
+*/
+.hero-h1{
+  font-family:var(--font-head);
+  /* 3rem on tiny phones, grows with viewport, never exceeds 6.5rem */
+  font-size:clamp(2.8rem, 8vw, 6.5rem);
+  line-height:1.05;
+  letter-spacing:-.5px;
+  /* These two lines are the actual hard guarantee */
+  max-width:100%;
+  overflow-wrap:anywhere;
+  opacity:0;animation:fadeUp .8s .4s forwards;
+}
+.hero-h1 .line1{color:var(--white);display:block}
+.hero-h1 .line2{
+  display:block;
+  -webkit-text-stroke:2px var(--blue-b);
+  color:transparent;
+}
+.hero-h1 .line3{color:var(--blue-b);display:block}
+
+.hero-sub{
+  margin-top:18px;max-width:100%;
+  font-size:.88rem;font-weight:400;line-height:1.72;color:var(--w50);
+  opacity:0;animation:fadeUp .8s .6s forwards;
+}
+.hero-actions{
+  margin-top:28px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  opacity:0;animation:fadeUp .8s .8s forwards;
+}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--blue);color:var(--white);
+  padding:13px 26px;border-radius:100px;
+  font-size:.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  position:relative;overflow:hidden;
+  transition:transform .2s,background .25s,box-shadow .25s;
+  white-space:nowrap;box-shadow:0 4px 20px rgba(26,109,255,.35);
+}
+.btn-primary::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.18) 50%,transparent 70%);
+  transform:translateX(-100%);transition:transform .5s;
+}
+.btn-primary:hover::before{transform:translateX(100%)}
+.btn-primary:hover{background:var(--blue-b);transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,109,255,.5)}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--w25);color:var(--w85);
+  padding:13px 22px;border-radius:100px;
+  font-size:.78rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  transition:border-color .25s,color .25s,transform .2s;white-space:nowrap;
+}
+.btn-outline:hover{border-color:var(--blue-b);color:var(--blue-b);transform:translateY(-2px)}
+
+/* KPI row */
+.hero-kpi{
+  display:flex;flex-direction:row;gap:0;
+  border-top:1px solid rgba(26,109,255,.12);
+  margin-top:32px;padding-top:24px;
+  opacity:0;animation:fadeUp .8s 1s forwards;
+}
+.kpi{flex:1;padding:0 14px}
+.kpi:first-child{padding-left:0}
+.kpi+.kpi{border-left:1px solid rgba(255,255,255,.06)}
+.kpi-num{font-family:var(--font-head);font-size:1.9rem;line-height:1;color:var(--blue-b)}
+.kpi-label{font-size:.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--w50);margin-top:4px}
+
+/* Scroll indicator */
+.scroll-hint{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  opacity:0;animation:fadeUp .8s 1.5s forwards;
+}
+.scroll-hint span{font-size:.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--w25)}
+.scroll-mouse{width:18px;height:28px;border:1.5px solid rgba(255,255,255,.15);border-radius:9px;display:flex;justify-content:center;padding-top:4px}
+.scroll-pip{width:2px;height:5px;background:var(--blue-b);border-radius:1px;animation:scrollPip 1.8s ease infinite}
+@keyframes scrollPip{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(10px)}}
+
+/* ─────────────────── SECTION SHELL ─────────────────── */
+.section{position:relative;z-index:1;padding:100px 48px}
+.section-alt{background:var(--bg2)}
+.section-label{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:.67rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--blue-b);margin-bottom:14px;
+}
+.section-label::before{content:'';width:22px;height:1.5px;background:var(--blue-b)}
+.section-heading{
+  font-family:var(--font-head);
+  font-size:clamp(2.2rem,4.5vw,4rem);
+  line-height:1;letter-spacing:.5px;
+  margin-bottom:56px;
+}
+.section-heading span{color:var(--blue-b)}
+
+/* ─────────────────── REVEAL ─────────────────── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ─────────────────── WHY GRID ─────────────────── */
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border:1px solid rgba(26,109,255,.1)}
+.why-card{
+  padding:32px 28px;
+  background:var(--bg3);
+  border-right:1px solid rgba(26,109,255,.08);
+  border-bottom:1px solid rgba(26,109,255,.08);
+  position:relative;overflow:hidden;
+  transition:background .35s;
+}
+.why-card:hover{background:var(--b08)}
+.why-card::before{
+  content:'';position:absolute;top:0;left:0;
+  width:2px;height:0;background:var(--blue-b);
+  transition:height .4s;
+}
+.why-card:hover::before{height:100%}
+.why-n{
+  font-family:var(--font-head);font-size:3rem;
+  color:rgba(26,109,255,.07);position:absolute;top:12px;right:18px;line-height:1;
+}
+.why-icon-wrap{
+  width:38px;height:38px;
+  border:1px solid var(--b30);
+  border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+}
+.why-icon-wrap svg{width:18px;height:18px;stroke:var(--blue-b);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.why-card h3{font-family:var(--font-head);font-size:1.25rem;letter-spacing:.5px;margin-bottom:10px}
+.why-card p{font-size:.83rem;line-height:1.7;color:var(--w50)}
+
+/* ─────────────────── COURSES ─────────────────── */
+.courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.course-card{
+  border:1px solid rgba(26,109,255,.14);
+  border-radius:var(--radius);padding:28px 24px;
+  background:linear-gradient(135deg,var(--b08),transparent);
+  position:relative;overflow:hidden;
+  transition:box-shadow .35s,transform .25s;
+}
+.course-card:hover{
+  box-shadow:0 16px 48px rgba(26,109,255,.18),0 0 0 1px var(--blue);
+  transform:translateY(-3px);
+}
+.course-badge{
+  display:inline-block;
+  font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:4px 10px;border-radius:1px;margin-bottom:16px;
+}
+.badge-std{background:var(--blue);color:#fff}
+.badge-hot{background:#00c3ff;color:var(--bg)}
+.badge-pro{background:rgba(255,255,255,.1);color:var(--w85);border:1px solid var(--w25)}
+.badge-ref{background:rgba(26,109,255,.2);color:var(--blue-b);border:1px solid var(--b30)}
+.course-card h3{font-family:var(--font-head);font-size:1.5rem;letter-spacing:.5px;margin-bottom:8px}
+.course-card p{font-size:.82rem;line-height:1.65;color:var(--w50);margin-bottom:20px}
+.course-meta{font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue-b)}
+.course-glow{position:absolute;bottom:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(26,109,255,.22),transparent 70%);pointer-events:none}
+
+/* ─────────────────── STEPS ─────────────────── */
+.steps-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;margin-top:56px}
+.steps-line{
+  position:absolute;top:26px;left:calc(12.5%);right:calc(12.5%);
+  height:1px;background:linear-gradient(to right,transparent,var(--blue),var(--blue-b),var(--blue),transparent);
+  opacity:.2;
+}
+.step{padding:0 16px;text-align:center}
+.step-ring{
+  width:52px;height:52px;border-radius:50%;
+  background:var(--bg);
+  border:2px solid var(--blue);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;
+  font-family:var(--font-head);font-size:1.15rem;color:var(--blue-b);
+  position:relative;
+  box-shadow:0 0 0 0 rgba(26,109,255,.5);
+  animation:pulseRing 2.5s ease-out infinite;
+}
+.step:nth-child(2) .step-ring{animation-delay:.4s}
+.step:nth-child(3) .step-ring{animation-delay:.8s}
+.step:nth-child(4) .step-ring{animation-delay:1.2s}
+@keyframes pulseRing{
+  0%{box-shadow:0 0 0 0 rgba(26,109,255,.5)}
+  70%{box-shadow:0 0 0 16px rgba(26,109,255,0)}
+  100%{box-shadow:0 0 0 0 rgba(26,109,255,0)}
+}
+.step h4{font-family:var(--font-head);font-size:1.1rem;letter-spacing:.5px;margin-bottom:8px}
+.step p{font-size:.8rem;line-height:1.6;color:var(--w50)}
+
+/* ─────────────────── TESTIMONIALS ─────────────────── */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px}
+.testi-card{
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--radius);padding:28px 24px;
+  background:rgba(255,255,255,.02);
+  transition:border-color .3s;
+}
+.testi-card:hover{border-color:var(--b30)}
+.stars{display:flex;gap:3px;margin-bottom:14px}
+.star{font-size:.85rem;color:var(--blue-b)}
+.star.dim{color:rgba(255,255,255,.12)}
+.testi-q{
+  font-size:.84rem;line-height:1.72;
+  color:var(--w85);font-style:italic;
+  margin-bottom:20px;
+}
+.testi-q::before{
+  content:'\201C';
+  font-family:var(--font-head);font-size:2.5rem;
+  color:var(--blue);line-height:0;
+  vertical-align:-12px;margin-right:3px;
+}
+.testi-author{display:flex;align-items:center;gap:12px}
+.testi-av{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue),#00c3ff);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;font-weight:700;color:#fff;
+}
+.testi-name{font-size:.82rem;font-weight:700}
+.testi-meta{font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--w50);margin-top:2px}
+
+/* ─────────────────── CONTACT ─────────────────── */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+.contact-body{font-size:.88rem;line-height:1.8;color:var(--w50);margin-bottom:36px}
+.contact-items{display:flex;flex-direction:column;gap:14px}
+.citem{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;
+  border:1px solid rgba(26,109,255,.12);
+  border-radius:var(--radius);background:var(--b08);
+  transition:border-color .25s;
+}
+.citem:hover{border-color:var(--blue)}
+.citem-icon{
+  width:36px;height:36px;border-radius:var(--radius);
+  background:var(--blue);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.citem-icon svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.citem-label{font-size:.67rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue-b);margin-bottom:2px}
+.citem-val{font-size:.84rem;color:var(--w85)}
+
+/* Form */
+.form{display:flex;flex-direction:column;gap:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg{display:flex;flex-direction:column;gap:7px}
+.fg label{font-size:.67rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue-b)}
+.fg input,.fg select,.fg textarea{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--radius);
+  padding:13px 15px;
+  color:var(--white);
+  font-family:var(--font-body);font-size:.85rem;
+  outline:none;transition:border-color .25s,background .25s;
+  cursor:none;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{
+  border-color:var(--blue);background:var(--b08);
+}
+.fg textarea{resize:vertical;min-height:90px}
+.fg select option{background:var(--bg2)}
+.btn-submit{
+  align-self:flex-start;
+  background:var(--blue);color:var(--white);
+  padding:14px 34px;border-radius:var(--radius);
+  font-size:.8rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  margin-top:6px;position:relative;overflow:hidden;
+  transition:background .25s,transform .2s;
+  cursor:none;
+}
+.btn-submit:hover{background:var(--blue-b);transform:translateY(-2px)}
+.btn-submit::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.15) 50%,transparent 70%);
+  transform:translateX(-100%);transition:transform .5s;
+}
+.btn-submit:hover::before{transform:translateX(100%)}
+
+/* ─────────────────── FOOTER ─────────────────── */
+footer{
+  position:relative;z-index:1;
+  background:var(--bg);
+  border-top:1px solid rgba(26,109,255,.12);
+  padding:60px 48px 30px;
+}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:44px}
+.f-brand{font-family:var(--font-head);font-size:1.4rem;letter-spacing:3px;margin-bottom:14px}
+.f-brand span{color:var(--blue-b)}
+.f-desc{font-size:.82rem;line-height:1.7;color:var(--w50);max-width:260px;margin-bottom:22px}
+.f-socials{display:flex;gap:10px}
+.f-soc{
+  width:34px;height:34px;
+  border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--w50);font-size:.75rem;font-weight:700;
+  transition:border-color .25s,color .25s,background .25s;
+  cursor:none;
+}
+.f-soc:hover{border-color:var(--blue);color:var(--white);background:var(--b08)}
+.f-col h4{font-family:var(--font-head);font-size:.9rem;letter-spacing:2px;color:var(--blue-b);margin-bottom:18px}
+.f-links{display:flex;flex-direction:column;gap:10px}
+.f-links a{
+  font-size:.82rem;color:var(--w50);
+  display:flex;align-items:center;gap:6px;
+  transition:color .25s;
+}
+.f-links a::before{content:'–';color:var(--blue);font-size:.7rem}
+.f-links a:hover{color:var(--white)}
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,.05);
+  padding-top:22px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.footer-bottom p{font-size:.75rem;color:var(--w25)}
+.footer-bottom span{color:var(--blue-b)}
+
+/* ─────────────────── WHATSAPP FLOAT ─────────────────── */
+.wa-float{
+  position:fixed;bottom:30px;right:30px;z-index:800;
+  animation:waFloat 3.2s ease-in-out infinite;
+}
+.wa-float a{
+  width:56px;height:56px;border-radius:50%;
+  background:#25D366;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 28px rgba(37,211,102,.4);
+  position:relative;cursor:none;transition:transform .25s;
+}
+.wa-float a:hover{transform:scale(1.1)}
+.wa-float a::before,.wa-float a::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  border:2px solid rgba(37,211,102,.35);
+  animation:waPulse 2s ease-out infinite;
+}
+.wa-float a::after{animation-delay:.55s;border-width:1.5px;border-color:rgba(37,211,102,.18)}
+.wa-svg{width:27px;height:27px;fill:#fff}
+.wa-tip{
+  position:absolute;right:66px;top:50%;transform:translateY(-50%);
+  background:rgba(3,7,15,.95);border:1px solid rgba(37,211,102,.28);
+  color:var(--white);padding:7px 13px;border-radius:var(--radius);
+  font-size:.74rem;white-space:nowrap;font-family:var(--font-body);
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.wa-float a:hover .wa-tip{opacity:1}
+@keyframes waFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-9px)}
+}
+@keyframes waPulse{
+  0%{transform:scale(1);opacity:1}
+  100%{transform:scale(1.65);opacity:0}
+}
+
+/* ─────────────────── KEYFRAMES ─────────────────── */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(22px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeLeft{
+  from{opacity:0;transform:translateX(22px)}
+  to{opacity:1;transform:translateX(0)}
+}
+
+/* ─────────────────── RESPONSIVE ─────────────────── */
+@media(max-width:1100px){
+  .hero{padding-right:48px}
+  .hero-img-col{width:240px}
+  .hero-img,.hero-img-placeholder{height:320px}
+}
+@media(max-width:900px){
+  nav{padding:0 24px}
+  .nav-links{display:none}
+  .section{padding-left:24px;padding-right:24px}
+
+  /* Hero on mobile: simple flex, no grid */
+  .hero{padding:80px 22px 56px}
+  .hero-pill-text{font-size:.56rem;letter-spacing:1.8px}
+  .hero-kpi{margin-top:24px;padding-top:18px}
+  .kpi-num{font-size:1.5rem}
+  .nav-burger{display:flex}
+  .nav-links{display:none}
+
+  .why-grid{grid-template-columns:1fr 1fr}
+  .steps-wrap{grid-template-columns:1fr 1fr;gap:32px}
+  .steps-line{display:none}
+  .testi-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr}
+  .section{padding-left:22px;padding-right:22px}
+  body{cursor:auto}
+  #c-dot,#c-ring{display:none}
+}
+@media(max-width:540px){
+  .why-grid{grid-template-columns:1fr}
+  .courses-grid{grid-template-columns:1fr}
+  footer{padding:40px 24px 22px}
+  .footer-top{grid-template-columns:1fr}
+  .hero-kpi{flex-direction:column;border-top:1px solid rgba(26,109,255,.15);gap:0}
+  .kpi{padding:14px 0;border-left:none !important;border-top:1px solid rgba(255,255,255,.05) !important}
+  .kpi:first-child{border-top:none !important;padding-top:0}
+}
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div id="c-dot"></div>
+<div id="c-ring"></div>
+
+<!-- Background grid canvas -->
+<canvas id="grid-canvas"></canvas>
+
+<!-- Blobs -->
+<div class="blobs">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<!-- Floating WhatsApp -->
+<div class="wa-float">
+  <a href="https://wa.me/237677695963" target="_blank" rel="noopener">
+    <svg class="wa-svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <div class="wa-tip">Chat on WhatsApp</div>
+  </a>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <!-- Logo: icon + name + subtitle -->
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 17l2-7h14l2 7"/><path d="M5 17h14"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/><path d="M9 10V7"/></svg>
+    </div>
+    <div class="nav-logo-text">
+      <span class="nav-logo-name">CEMO<em>RET</em></span>
+      <span class="nav-logo-sub">Driving School</span>
+    </div>
+  </a>
+
+  <!-- Desktop links -->
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#courses">Courses</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#contact" class="nav-cta"><span class="nav-cta-dot"></span>Enroll Now</a></li>
+  </ul>
+
+  <!-- Mobile hamburger -->
+  <button class="nav-burger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile drawer -->
+<div class="nav-drawer" id="drawer">
+  <a href="#about" class="drawer-link">About</a>
+  <a href="#courses" class="drawer-link">Courses</a>
+  <a href="#process" class="drawer-link">Process</a>
+  <a href="#reviews" class="drawer-link">Reviews</a>
+  <a href="#contact" class="drawer-cta">Enroll Now</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <!-- Pill announcement -->
+  <div class="hero-pill">
+    <span class="hero-pill-dot"></span>
+    <span class="hero-pill-text">Now Enrolling &middot; Bamenda, Cameroon</span>
+  </div>
+
+  <!-- Main headline — 3 lines, always fits -->
+  <h1 class="hero-h1">
+    <span class="line1">Master The Road.</span>
+    <span class="line2">Drive With</span>
+    <span class="line3">Confidence.</span>
+  </h1>
+
+  <p class="hero-sub">Professional driving instruction in Bamenda, Cameroon. Certified instructors, real roads, proven results — your licence starts here.</p>
+
+  <div class="hero-actions">
+    <a href="#contact" class="btn-primary">Get Started <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    <a href="#courses" class="btn-outline">View Courses</a>
+  </div>
+
+  <!-- Stats row -->
+  <div class="hero-kpi">
+    <div class="kpi"><div class="kpi-num" data-count="500">0</div><div class="kpi-label">Graduates</div></div>
+    <div class="kpi"><div class="kpi-num" data-count="10">0</div><div class="kpi-label">Years Active</div></div>
+    <div class="kpi"><div class="kpi-num" data-count="98">0</div><div class="kpi-label">Pass Rate %</div></div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-mouse"><div class="scroll-pip"></div></div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="section section-alt" id="about">
+  <p class="section-label reveal">Why Choose Us</p>
+  <h2 class="section-heading reveal">THE CEMORET <span>DIFFERENCE</span></h2>
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <div class="why-n">01</div>
+      <div class="why-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <h3>Expert Instructors</h3>
+      <p>Certified, patient instructors with years of road experience — teaching you to drive for life, not just to pass a test.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-n">02</div>
+      <div class="why-icon-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <h3>Fast-Track Results</h3>
+      <p>Our structured curriculum builds skill progressively so you reach road-readiness faster than traditional programmes.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-n">03</div>
+      <div class="why-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3>Safety First</h3>
+      <p>Defensive driving, emergency response, hazard awareness — the skills that protect you every time you take the wheel.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-n">04</div>
+      <div class="why-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <h3>Local Road Expertise</h3>
+      <p>We train on Bamenda's actual roads — hills, roundabouts, and traffic patterns unique to the Northwest Region.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-n">05</div>
+      <div class="why-icon-wrap">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <h3>Flexible Scheduling</h3>
+      <p>Morning, afternoon, and weekend slots available — structured around your life, not ours.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-n">06</div>
+      <div class="why-icon-wrap">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <h3>Proven Track Record</h3>
+      <p>Over 500 graduates since opening. One of the most trusted driving schools in the Northwest Region.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<section class="section" id="courses">
+  <p class="section-label reveal">Programmes</p>
+  <h2 class="section-heading reveal">CHOOSE YOUR <span>COURSE</span></h2>
+  <div class="courses-grid">
+    <div class="course-card reveal">
+      <span class="course-badge badge-std">Beginner</span>
+      <h3>Category B Licence</h3>
+      <p>Full training for first-time drivers. Theory, practical lessons, and exam preparation for your standard licence.</p>
+      <div class="course-meta">4 – 6 Weeks &nbsp;·&nbsp; Standard Car</div>
+      <div class="course-glow"></div>
+    </div>
+    <div class="course-card reveal">
+      <span class="course-badge badge-hot">Most Popular</span>
+      <h3>Intensive Course</h3>
+      <p>A condensed, full-immersion programme for motivated learners who want results quickly with daily sessions.</p>
+      <div class="course-meta">2 – 3 Weeks &nbsp;·&nbsp; Daily Lessons</div>
+      <div class="course-glow"></div>
+    </div>
+    <div class="course-card reveal">
+      <span class="course-badge badge-pro">Professional</span>
+      <h3>Commercial Driving</h3>
+      <p>For those pursuing driving as a career. Heavy vehicle handling, passenger safety, and professional conduct.</p>
+      <div class="course-meta">6 – 8 Weeks &nbsp;·&nbsp; Heavy Vehicles</div>
+      <div class="course-glow"></div>
+    </div>
+    <div class="course-card reveal">
+      <span class="course-badge badge-ref">Refresher</span>
+      <h3>Refresher Lessons</h3>
+      <p>Already licenced but need a confidence boost? Our refresher programme gets you back on the road safely.</p>
+      <div class="course-meta">Flexible &nbsp;·&nbsp; 2 – 5 Sessions</div>
+      <div class="course-glow"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section section-alt" id="process" style="clip-path:polygon(0 36px,100% 0,100% calc(100% - 36px),0 100%);padding-top:136px;padding-bottom:136px;margin:-36px 0">
+  <p class="section-label reveal">How It Works</p>
+  <h2 class="section-heading reveal">YOUR ROAD TO <span>LICENCE</span></h2>
+  <div class="steps-wrap">
+    <div class="steps-line"></div>
+    <div class="step reveal">
+      <div class="step-ring">01</div>
+      <h4>Register</h4>
+      <p>Sign up via WhatsApp or visit us at CCC Junction, Che Street, Bamenda.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-ring">02</div>
+      <h4>Theory Class</h4>
+      <p>Master the highway code, road signs, and Cameroon traffic regulations.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-ring">03</div>
+      <h4>Practical Training</h4>
+      <p>Behind the wheel with a certified instructor on Bamenda's real roads.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-ring">04</div>
+      <h4>Licence</h4>
+      <p>Pass your exam with confidence and drive away with your official licence.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" id="reviews" style="margin-top:36px">
+  <p class="section-label reveal">Student Reviews</p>
+  <h2 class="section-heading reveal">WHAT PEOPLE <span>SAY</span></h2>
+  <div class="testi-grid">
+    <div class="testi-card reveal">
+      <div class="stars"><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span></div>
+      <p class="testi-q">One of the best driving schools in the North West Region. Thank God for the talented instructors and management. Truly professional.</p>
+      <div class="testi-author">
+        <div class="testi-av">MA</div>
+        <div>
+          <div class="testi-name">Mbah Peter Asanji</div>
+          <div class="testi-meta">Bamenda · Graduate</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="stars"><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span></div>
+      <p class="testi-q">Cemoret is a place that brings out the best in you as far as driving is concerned. I passed on my very first attempt.</p>
+      <div class="testi-author">
+        <div class="testi-av">MP</div>
+        <div>
+          <div class="testi-name">Mbassi Pascal</div>
+          <div class="testi-meta">Bamenda · Graduate</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="stars"><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star dim">&#9733;</span></div>
+      <p class="testi-q">The instructors are patient and knowledgeable. I came in nervous and left a confident driver ready for the roads. Good work.</p>
+      <div class="testi-author">
+        <div class="testi-av">KB</div>
+        <div>
+          <div class="testi-name">Kena Boris</div>
+          <div class="testi-meta">Bamenda · Graduate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section section-alt" id="contact">
+  <p class="section-label reveal">Get In Touch</p>
+  <h2 class="section-heading reveal">READY TO <span>START?</span></h2>
+  <div class="contact-grid">
+    <div>
+      <p class="contact-body">Take the first step toward your driver's licence today. Reach out via WhatsApp, call us, or drop by our office at CCC Junction, Bamenda. We're ready when you are.</p>
+      <div class="contact-items reveal">
+        <div class="citem">
+          <div class="citem-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div>
+            <div class="citem-label">Location</div>
+            <div class="citem-val">CCC Junction, Che Street, Bamenda, Cameroon</div>
+          </div>
+        </div>
+        <div class="citem">
+          <div class="citem-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.41 10a19.79 19.79 0 01-3.07-8.67A2 2 0 012.32 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 9.91a16 16 0 006.18 6.18l1.27-.76a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 17.48z"/></svg></div>
+          <div>
+            <div class="citem-label">Phone / WhatsApp</div>
+            <div class="citem-val">+237 677 695 963</div>
+          </div>
+        </div>
+        <div class="citem">
+          <div class="citem-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8l10 7 10-7"/></svg></div>
+          <div>
+            <div class="citem-label">Email</div>
+            <div class="citem-val">info@cemoretdrivingschool.com</div>
+          </div>
+        </div>
+        <div class="citem">
+          <div class="citem-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div>
+            <div class="citem-label">Hours</div>
+            <div class="citem-val">Monday – Saturday &nbsp;·&nbsp; 7:30 AM – 6:00 PM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal">
+      <form class="form" onsubmit="submitForm(event)">
+        <div class="form-row">
+          <div class="fg"><label>First Name</label><input type="text" placeholder="John" required></div>
+          <div class="fg"><label>Last Name</label><input type="text" placeholder="Doe" required></div>
+        </div>
+        <div class="fg"><label>Phone Number</label><input type="tel" placeholder="+237 6XX XXX XXX" required></div>
+        <div class="fg">
+          <label>Course</label>
+          <select required>
+            <option value="" disabled selected>Select a programme</option>
+            <option>Category B Licence</option>
+            <option>Intensive Course</option>
+            <option>Commercial Driving</option>
+            <option>Refresher Lessons</option>
+          </select>
+        </div>
+        <div class="fg"><label>Message (optional)</label><textarea placeholder="Your schedule, experience level, or any questions..."></textarea></div>
+        <button type="submit" class="btn-submit">Send Enquiry</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="f-brand">CEMO<span>RET</span></div>
+      <p class="f-desc">Bamenda's trusted driving school. Building confident, skilled drivers in the Northwest Region since founding.</p>
+      <div class="f-socials">
+        <a href="#" class="f-soc">Fb</a>
+        <a href="#" class="f-soc">Ig</a>
+        <a href="#" class="f-soc">Yt</a>
+        <a href="#" class="f-soc">Tt</a>
+      </div>
+    </div>
+    <div class="f-col">
+      <h4>Quick Links</h4>
+      <ul class="f-links">
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#courses">Courses</a></li>
+        <li><a href="#process">How It Works</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Programmes</h4>
+      <ul class="f-links">
+        <li><a href="#courses">Category B</a></li>
+        <li><a href="#courses">Intensive</a></li>
+        <li><a href="#courses">Commercial</a></li>
+        <li><a href="#courses">Refresher</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Contact</h4>
+      <ul class="f-links">
+        <li><a href="tel:+237677695963">+237 677 695 963</a></li>
+        <li><a href="https://wa.me/237677695963">WhatsApp</a></li>
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#contact">Send Enquiry</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; <span>2026</span> Cemoret Driving School. All rights reserved.</p>
+    <p>CCC Junction &nbsp;·&nbsp; Che Street &nbsp;·&nbsp; Bamenda, Cameroon</p>
+  </div>
+</footer>
+
+<script>
+/* ── CURSOR ── */
+const dot = document.getElementById('c-dot');
+const ring = document.getElementById('c-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  dot.style.left=mx+'px';dot.style.top=my+'px';
+});
+(function animRing(){
+  rx+=(mx-rx)*.1;ry+=(my-ry)*.1;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+
+/* ── NAV SCROLL ── */
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',scrollY>40);
+});
+
+/* ── HAMBURGER ── */
+const burger=document.getElementById('burger');
+const drawer=document.getElementById('drawer');
+burger.addEventListener('click',()=>{
+  burger.classList.toggle('open');
+  drawer.classList.toggle('open');
+});
+// Close drawer when a link is clicked
+drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  burger.classList.remove('open');
+  drawer.classList.remove('open');
+}));
+
+/* ── ANIMATED GRID CANVAS ── */
+(function(){
+  const cvs=document.getElementById('grid-canvas');
+  const ctx=cvs.getContext('2d');
+  let W,H;
+  function resize(){W=cvs.width=innerWidth;H=cvs.height=innerHeight}
+  resize();
+  window.addEventListener('resize',resize);
+
+  const COLS=Math.ceil(innerWidth/60)+2;
+  const ROWS=Math.ceil(innerHeight/60)+2;
+  const SIZE=60;
+
+  // Particles on intersections
+  const pts=[];
+  for(let i=0;i<55;i++){
+    pts.push({
+      x:Math.random()*innerWidth,
+      y:Math.random()*innerHeight,
+      r:Math.random()*1.2+.3,
+      dx:(Math.random()-.5)*.35,
+      dy:(Math.random()-.5)*.35,
+      o:Math.random()*.45+.1
+    });
+  }
+
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    // Grid lines
+    ctx.strokeStyle='rgba(26,109,255,0.07)';
+    ctx.lineWidth=.5;
+    for(let x=0;x<W+SIZE;x+=SIZE){
+      ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();
+    }
+    for(let y=0;y<H+SIZE;y+=SIZE){
+      ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
+    }
+
+    // Animated scanline glow
+    const lineY=(t%H);
+    const grad=ctx.createLinearGradient(0,lineY-60,0,lineY+60);
+    grad.addColorStop(0,'rgba(26,109,255,0)');
+    grad.addColorStop(.5,'rgba(26,109,255,0.04)');
+    grad.addColorStop(1,'rgba(26,109,255,0)');
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,lineY-60,W,120);
+    t+=.6;
+
+    // Particles + connections
+    pts.forEach(p=>{
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(77,148,255,${p.o})`;
+      ctx.fill();
+      p.x+=p.dx;p.y+=p.dy;
+      if(p.x<0||p.x>W)p.dx*=-1;
+      if(p.y<0||p.y>H)p.dy*=-1;
+    });
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+        if(d<110){
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x,pts[i].y);
+          ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle=`rgba(26,109,255,${.12*(1-d/110)})`;
+          ctx.lineWidth=.5;ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── SCROLL REVEAL ── */
+const ro=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const delay=e.target.dataset.delay||0;
+      setTimeout(()=>e.target.classList.add('visible'),+delay);
+    }
+  });
+},{threshold:.13});
+document.querySelectorAll('.reveal').forEach((el,i)=>{
+  el.dataset.delay=i%3*90;
+  ro.observe(el);
+});
+
+/* ── COUNTER ANIMATION ── */
+const ko=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('[data-count]').forEach(el=>{
+        const target=+el.dataset.count;
+        let c=0,step=target/55;
+        const tid=setInterval(()=>{
+          c=Math.min(c+step,target);
+          el.textContent=Math.floor(c)+'+';
+          if(c>=target)clearInterval(tid);
+        },18);
+        delete el.dataset.count;
+      });
+      ko.disconnect();
+    }
+  });
+},{threshold:.3});
+const kpiEl=document.querySelector('.hero-kpi');
+if(kpiEl)ko.observe(kpiEl);
+
+/* ── FORM ── */
+function submitForm(e){
+  e.preventDefault();
+  const btn=e.target.querySelector('.btn-submit');
+  btn.textContent='Enquiry Sent';
+  btn.style.background='#25D366';
+  setTimeout(()=>{btn.textContent='Send Enquiry';btn.style.background='';e.target.reset();},3200);
+}
+</script>
+</body>
+</html>
